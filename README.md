@@ -48,7 +48,7 @@ Once running, open your web browser and navigate to:
 **`http://localhost:8501`**
 
 ## How to Use
-1. **Enter URL**: Copy and paste any Google Codelab URL (e.g., `https://codelabs.developers.google.com/developer-knowledge-mcp-antigravity`) into the **Codelab URL** input in the sidebar.
+1. **Enter URL**: Copy and paste any Google Codelab URL into the **Codelab URL** input in the sidebar.
 2. **Fetch and Preview**: Click **Fetch & Preview**. This parses the Codelab content and loads an interactive step-by-step browser on the right side.
 3. **Configure Export**:
    * Select your output format (HTML, Markdown, or PDF).
