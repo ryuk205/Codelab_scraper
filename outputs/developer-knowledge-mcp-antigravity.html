@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Developer Knowledge MCP server in Google Antigravity 2.0, IDE, and/or CLI | Google Codelab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --container-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --primary: #1a73e8;
+            --primary-hover: #1557b0;
+            --primary-light: #e8f0fe;
+            --code-bg: #1e1e2e;
+            --code-text: #cdd6f4;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --container-bg: #121212;
+            --text-color: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #27272a;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --primary-light: #1e3a8a;
+            --code-bg: #09090b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Header styling */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .header-title-container {
+            max-width: 70%;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--bg-color);
+            border-color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            color: #ffffff;
+        }
+
+        /* App Layout */
+        .app-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 320px;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            position: sticky;
+            top: 70px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            background-color: var(--container-bg);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .sidebar-link:hover {
+            background-color: var(--bg-color);
+            padding-left: 1.25rem;
+        }
+
+        .sidebar-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        /* Content Panel */
+        .content-panel {
+            flex: 1;
+            padding: 3rem 4rem;
+            overflow-y: auto;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .codelab-step {
+            margin-bottom: 5rem;
+            scroll-margin-top: 100px;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.3s;
+        }
+
+        .step-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .step-duration {
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .step-content {
+            font-size: 1.05rem;
+        }
+
+        .step-content p {
+            margin-bottom: 1.25rem;
+        }
+
+        /* Callout boxes */
+        .callout {
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            font-size: 0.975rem;
+        }
+
+        .callout-note {
+            background-color: #f0f7ff;
+            border-color: #1a73e8;
+            color: #185abc;
+        }
+        body.dark-mode .callout-note {
+            background-color: #1e293b;
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        .callout-warning {
+            background-color: #fce8e6;
+            border-color: #d93025;
+            color: #a51d24;
+        }
+        body.dark-mode .callout-warning {
+            background-color: #2d1f1f;
+            border-color: #ef4444;
+            color: #f87171;
+        }
+
+        /* Code blocks */
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            background-color: var(--bg-color);
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Lists */
+        .step-content ul, .step-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .step-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+        }
+
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 1.5rem auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                display: none;
+            }
+            .content-panel {
+                padding: 2rem;
+            }
+        }
+    </head>
+<body class="dark-mode">
+    <header>
+        <div class="header-title-container">
+            <h1 class="header-title" title="Google Developer Knowledge MCP server in Google Antigravity 2.0, IDE, and/or CLI">Google Developer Knowledge MCP server in Google Antigravity 2.0, IDE, and/or CLI</h1>
+            <div class="header-meta">
+                <span>Duration: 25 mins</span>
+                 • <span>By Pierrick Voulet</span>
+                 • <span>Updated: 2026-06-03T15:35:27Z</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn" id="theme-toggle" onclick="toggleTheme()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="sun-icon" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="moon-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                Toggle Dark Mode
+            </button>
+            <a href="https://codelabs.developers.google.com/developer-knowledge-mcp-antigravity" target="_blank" class="btn btn-primary">View Original</a>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Steps</h3>
+            <a href="#step-0" class="sidebar-link" id="link-0">1. Introduction</a><a href="#step-1" class="sidebar-link" id="link-1">2. Configure Cloud project</a><a href="#step-2" class="sidebar-link" id="link-2">3. Configure Antigravity</a><a href="#step-3" class="sidebar-link" id="link-3">4. Access Developer Knowledge</a><a href="#step-4" class="sidebar-link" id="link-4">5. Clean up</a><a href="#step-5" class="sidebar-link" id="link-5">6. Congratulations</a>
+        </aside>
+        
+        <main class="content-panel">
+            
+            <section id="step-0" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">1. Introduction</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 2 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Introduction" id="0" tabindex="-1">
+              1. Introduction
+          </h2>
+<div class="callout callout-note" style="background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #185abc;"><p><strong>Note:</strong> Are you still using the Gemini CLI? This guide covers the Antigravity CLI. More information on how to transition can be found in <a href="https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/" target="_blank">this official blog post</a>.</p>
+</div>
+<p><a href="https://developers.google.com/knowledge" target="_blank"><strong>Google Developer Knowledge</strong></a> is the canonical, machine-readable source of Google's public developer documentation. It's programmatically accessible via Application Programming Interface (API) and Model Context Protocol (MCP) so that developers can integrate it into applications and workflows.</p>
+<p>Instead of relying on outdated LLM training data or manual web scraping, AI agent developers should use it for real-time access to the most accurate documentation and reduce risk of hallucinations.</p>
+<p>In this codelab, you will learn how to install and use the <strong>Developer Knowledge MCP</strong> from <strong>Antigravity 2.0, IDE, and/or CLI</strong>. MCP is an open standard that enables AI models to securely use tools provided by remote servers. You will set up <strong>Antigravity</strong> to interact with the knowledge base without writing any code!</p>
+<p class="image-container"><img alt="dk_mcp_antigravity.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/dk_mcp_antigravity.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h2 data-text="What you'll do" id="what-youll-do" is-upgraded="" tabindex="-1">What you'll do</h2>
+<ul>
+<li>Enable the <strong>Developer Knowledge API</strong> in your Google Cloud project.</li>
+<li>Configure <strong>Antigravity</strong> to access the <strong>Developer Knowledge MCP</strong>.</li>
+<li>Test the integration with a few <strong>prompts</strong>.</li>
+</ul>
+<h2 data-text="What you'll need" id="what-youll-need" is-upgraded="" tabindex="-1">What you'll need</h2>
+<ul>
+<li>A web browser such as <a href="https://www.google.com/chrome/" target="_blank">Chrome</a></li>
+<li>A Google Cloud project (billing is <strong>not</strong> required).</li>
+<li>Antigravity 2.0, IDE, and/or CLI installed on your local machine. You can find more detail and installation guidance from <a href="https://antigravity.google/docs/home" target="_blank">the official website</a>.</li>
+</ul>
+<h2 data-text="Explore more MCPs and tools" id="explore-more-mcps-and-tools" is-upgraded="" tabindex="-1">Explore more MCPs and tools</h2>
+<p>In this codelab we only cover a few basic examples of what can be done using the Google Developer Knowledge MCP server. To see the full list of Google MCP servers and tools available, refer to the <a href="https://docs.cloud.google.com/mcp/supported-products" target="_blank">Supported Products</a>.</p>
+<div class="callout callout-note" style="background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #185abc;"><p><strong>Note:</strong> To go further and learn how to connect AI agents to user data, you might want to check the codelab <a href="https://codelabs.developers.google.com/google-workspace-mcp-antigravity" target="_blank">Google Workspace MCP servers in Google Antigravity</a> that demonstrates how to set up the official Workspace MCP servers in Antigravity.</p>
+</div>
+<h2 data-text="Easy access to this codelab" id="easy-access-to-this-codelab" is-upgraded="" tabindex="-1">Easy access to this codelab</h2>
+<p class="image-container"><img alt="qr_code.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/qr_code.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+                </div>
+            </section>
+            
+            <section id="step-1" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">2. Configure Cloud project</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 5 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Configure Cloud project" id="1" tabindex="-1">
+              2. Configure Cloud project
+          </h2>
+<h2 data-text="Create or Select a Google Cloud project" id="create-or-select-a-google-cloud-project" is-upgraded="" tabindex="-1">Create or Select a Google Cloud project</h2>
+<p>In the <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>, <a href="https://cloud.google.com/resource-manager/docs/creating-managing-projects" target="_blank"><strong>select or create a Google Cloud project</strong></a>.</p>
+<h2 data-text="Enable the API" id="enable-the-api" is-upgraded="" tabindex="-1">Enable the API</h2>
+<p>To use the Developer Knowledge MCP server, you must enable the standard Developer Knowledge API.</p>
+<p><a href="https://console.cloud.google.com/flows/enableapi?apiid=developerknowledge.googleapis.com" target="_blank"><button class="button button-primary">Enable the Developer Knowledge API</button></a></p>
+<h2 data-text="Create the API key" id="create-the-api-key" is-upgraded="" tabindex="-1">Create the API key</h2>
+<p>To use the Developer Knowledge MCP server, you must use an API key. In the <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>, do the following:</p>
+<ol type="1">
+<li>Go to <strong>APIs &amp; Services</strong> &gt; <strong>Credentials</strong>.</li>
+</ol>
+<p><a href="https://console.cloud.google.com/apis/credentials" target="_blank"><button class="button button-primary">Go to Credentials</button></a></p>
+<ol start="2" type="1">
+<li>Click <strong>+ Create credentials</strong>, then select <strong>API key</strong> from the menu.</li>
+<li>Set <strong>Name</strong> with an arbitrary name such as <code dir="ltr" translate="no">Antigravity</code>.</li>
+<li>Click the <strong>Select API restrictions</strong> drop-down, type <code dir="ltr" translate="no">Developer Knowledge API</code>, check the result, then click <strong>OK</strong>.<div class="callout callout-note" style="background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #185abc;"><p><strong>Note:</strong> There is a short delay before <strong>Developer Knowledge API</strong> appears in the list after its enablement, wait a few minutes and try again if you cannot find it.</p>
+</div>
+</li>
+</ol>
+<p class="image-container"><img alt="create_api_key.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/create_api_key.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<ol start="5" type="1">
+<li>Click <strong>Create</strong>.</li>
+<li>Your API key is now displayed on the confirmation screen. Copy it to your clipboard, you'll need it to configure <strong>Antigravity</strong> in the next steps.<div class="callout callout-warning" style="background-color: #fce8e6; border-left: 4px solid #d93025; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #a51d24;"><p><strong>Warning: </strong><strong>Important:</strong> Never share an API key publicly. The one you see in the following screenshot is fake, it was added for illustration purposes only.</p>
+</div>
+</li>
+</ol>
+<p class="image-container"><img alt="copy_api_key.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/copy_api_key.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+                </div>
+            </section>
+            
+            <section id="step-2" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">3. Configure Antigravity</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 10 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Configure Antigravity" id="2" tabindex="-1">
+              3. Configure Antigravity
+          </h2>
+<p>Now let's configure Antigravity to use the MCP endpoint. If you don't have Antigravity 2.0, IDE, and/or CLI installed, follow the instructions on the <a href="https://antigravity.google/docs/home" target="_blank">Antigravity website</a>.</p>
+<h2 data-text="Add custom MCP servers" id="add-custom-mcp-servers" is-upgraded="" tabindex="-1">Add custom MCP servers</h2>
+<p>Antigravity 2.0, IDE, and CLI share a central MCP configuration in the file <code dir="ltr" translate="no">~/.gemini/config/mcp_config.json</code>.</p>
+<ol type="1">
+<li>Open it in your preferred text editor.<div class="callout callout-note" style="background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #185abc;"><p><strong>Note:</strong> You can access the file directly from Antigravity IDE if you have it installed by following these steps:</p>
+<ol type="1">
+<li>Open <strong>MCP Servers</strong> via the <strong>...</strong> dropdown at the top of the editor's agent panel.</li>
+<li>Click <strong>Manage MCP Servers</strong> then <strong>View raw config</strong>.</li>
+</ol>
+</div>
+</li>
+<li>Modify it with the following custom MCP server configuration. Before doing so, replace the <strong>&lt;YOUR_API_KEY&gt;</strong> placeholder with the API key you created in the previous steps:</li>
+</ol>
+<div></div><pre style="background-color: #f6f8fa; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #e1e4e8; margin: 1rem 0;"><code class="language-json">{
+  "mcpServers": {
+    "google-developer-knowledge": {
+      "headers": {
+        "X-Goog-Api-Key": "&lt;YOUR_API_KEY&gt;"
+      },
+      "serverUrl": "https://developerknowledge.googleapis.com/mcp"
+    }
+    ...
+  }
+  ...
+}
+</code></pre>
+<ol start="3" type="1">
+<li>Save it.<div class="callout callout-warning" style="background-color: #fce8e6; border-left: 4px solid #d93025; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #a51d24;"><p><strong>Warning: </strong><strong>Important:</strong> Never share an API key publicly. The one you see in the following screenshot is fake, it was added for illustration purposes only.</p>
+</div>
+</li>
+</ol>
+<p class="image-container"><img alt="mcp_config.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/mcp_config.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h2 data-text="Validate" id="validate" is-upgraded="" tabindex="-1">Validate</h2>
+<p>You should see the MCP server that you configured as installed in Antigravity: <code dir="ltr" translate="no">google-developer-knowledge</code>.</p>
+<h3 data-text="Antigravity 2.0" id="antigravity-2.0" is-upgraded="" tabindex="-1">Antigravity 2.0</h3>
+<ol type="1">
+<li>Click <strong>Settings</strong> at the bottom left.</li>
+<li>Navigate to <strong>Customizations</strong>.</li>
+<li>Under <strong>Installed MCP Servers</strong>, click <strong>Refresh</strong>.</li>
+</ol>
+<p class="image-container"><img alt="configured_mcp_server_20.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/configured_mcp_server_20.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h3 data-text="Antigravity IDE" id="antigravity-ide" is-upgraded="" tabindex="-1">Antigravity IDE</h3>
+<ol type="1">
+<li>Open <strong>Antigravity User Settings</strong> via the <strong>Editor-Specific settings</strong> menu dropdown at the top of the window.</li>
+</ol>
+<p class="image-container"><img alt="open_user_settings_ide.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/open_user_settings_ide.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<ol start="2" type="1">
+<li>Navigate to <strong>Customizations</strong>.</li>
+<li>Under <strong>Installed MCP Servers</strong>, click <strong>Refresh</strong>.</li>
+</ol>
+<p class="image-container"><img alt="configured_mcp_server_ide.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/configured_mcp_server_ide.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h3 data-text="Antigravity CLI" id="antigravity-cli" is-upgraded="" tabindex="-1">Antigravity CLI</h3>
+<ol type="1">
+<li>Start the CLI executing the command <code dir="ltr" translate="no">agy</code> from a terminal.</li>
+<li>Type <code dir="ltr" translate="no">/mcp</code> and press <strong>enter</strong>.</li>
+</ol>
+<p class="image-container"><img alt="configured_mcp_server_cli.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/configured_mcp_server_cli.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+                </div>
+            </section>
+            
+            <section id="step-3" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">4. Access Developer Knowledge</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 5 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Access Developer Knowledge" id="3" tabindex="-1">
+              4. Access Developer Knowledge
+          </h2>
+<p>Now you can interact with Google Developer Knowledge using natural language. Here are some example prompts:</p>
+<ul>
+<li><code dir="ltr" translate="no">Based on the Google Developer Knowledge, does Google Workspace support MCP servers?</code></li>
+<li><code dir="ltr" translate="no">Give me a list of the Google Workspace and Cloud Run API names. Make it super short.</code></li>
+<li><code dir="ltr" translate="no">Based on the Google Developer Knowledge, create a new Python script to upload a file to Google Drive</code></li>
+</ul>
+<div class="callout callout-note" style="background-color: #e8f0fe; border-left: 4px solid #1a73e8; padding: 1rem; border-radius: 0 4px 4px 0; margin: 1.5rem 0; color: #185abc;"><p><strong>Note:</strong> The first time the agent tries to use a tool from this MCP server, Antigravity will ask for your approval. You'll need to <strong>allow</strong> to proceed.</p>
+<p class="image-container"><img alt="mcp_allow.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/mcp_allow.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+</div>
+<h3 data-text="Antigravity 2.0" id="antigravity-2.0_1" is-upgraded="" tabindex="-1">Antigravity 2.0</h3>
+<p class="image-container"><img alt="20_test.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/20_test.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h3 data-text="Antigravity IDE" id="antigravity-ide_1" is-upgraded="" tabindex="-1">Antigravity IDE</h3>
+<p class="image-container"><img alt="ide_test.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/ide_test.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+<h3 data-text="Antigravity CLI" id="antigravity-cli_1" is-upgraded="" tabindex="-1">Antigravity CLI</h3>
+<p class="image-container"><img alt="cli_test.png" sizes="(max-width: 840px) 100vw, 856px" src="https://codelabs.developers.google.com/static/developer-knowledge-mcp-antigravity/img/cli_test.png" style="max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px;"/></p>
+                </div>
+            </section>
+            
+            <section id="step-4" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">5. Clean up</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 2 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Clean up" id="4" tabindex="-1">
+              5. Clean up
+          </h2>
+<p>To clean up your Google Cloud project without deleting it, you can disable the <strong>Developer Knowledge API</strong> you enabled and delete the API key you created:</p>
+<ol type="1">
+<li>In the Google Cloud Console, go to the <a href="https://console.cloud.google.com/apis/dashboard" target="_blank"><strong>API &amp; Services Dashboard</strong></a>.</li>
+<li>Click <strong>Developer Knowledge API</strong> then <strong>Disable API</strong>.</li>
+<li>In the Google Cloud Console, go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank"><strong>API &amp; Services &gt; Credentials</strong></a>.</li>
+<li>Select the API key, click <strong>Delete</strong> then <strong>Delete</strong> to confirm.</li>
+</ol>
+                </div>
+            </section>
+            
+            <section id="step-5" class="codelab-step">
+                <div class="step-header">
+                    <h2 class="step-title">6. Congratulations</h2>
+                    <span class="step-duration"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 1 mins</span>
+                </div>
+                <div class="step-content">
+                    <h2 class="step-title" data-text="Congratulations" id="5" tabindex="-1">
+              6. Congratulations
+          </h2>
+<p>Congratulations! You have successfully configured and tested the Google Developer Knowledge MCP server using Antigravity.</p>
+<h3 data-text="Reference docs" id="reference-docs" is-upgraded="" tabindex="-1">Reference docs</h3>
+<ul>
+<li><a href="https://codelabs.developers.google.com/google-workspace-mcp-antigravity" target="_blank">Google Workspace MCP servers in Google Antigravity 2.0, IDE, and/or CLI</a></li>
+<li><a href="https://modelcontextprotocol.io/introduction" target="_blank">Introduction to Model Context Protocol (MCP)</a></li>
+<li><a href="https://antigravity.google/docs/home" target="_blank">Antigravity</a></li>
+</ul>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Restore theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('sun-icon').style.display = 'block';
+            document.getElementById('moon-icon').style.display = 'none';
+        }
+
+        // Sidebar active link highlighting on scroll
+        const sections = document.querySelectorAll('.codelab-step');
+        const navLinks = document.querySelectorAll('.sidebar-link');
+
+        window.addEventListener('scroll', () => {
+            let current = "";
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#` + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
